@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مسابقه Jev در برابر LLM</title>
+<style>
+  @font-face { font-family:"Vazirmatn"; src:url("/fonts/Vazirmatn-Regular.woff2") format("woff2"); font-weight:400; font-display:swap; }
+  @font-face { font-family:"Vazirmatn"; src:url("/fonts/Vazirmatn-Medium.woff2") format("woff2"); font-weight:500; font-display:swap; }
+  @font-face { font-family:"Vazirmatn"; src:url("/fonts/Vazirmatn-Bold.woff2") format("woff2"); font-weight:700; font-display:swap; }
+  :root { --bg:#0f1220; --card:#181c2e; --line:#2a3050; --txt:#e8eaf3; --mut:#8b92b3;
+          --jev:#22c55e; --llm:#f59e0b; --yes:#38bdf8; --no:#a78bfa; --err:#ef4444; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt); font-family:"Vazirmatn", Tahoma, sans-serif; font-size:14px; line-height:1.7; }
+  button, textarea, input { font-family:inherit; }
+  .wrap { max-width:1200px; margin:0 auto; padding:16px; }
+  h1 { margin:4px 0 2px; font-size:22px; }
+  .sub { color:var(--mut); margin-bottom:14px; }
+  textarea { width:100%; min-height:80px; background:var(--card); color:var(--txt); border:1px solid var(--line);
+             border-radius:8px; padding:10px; font:inherit; unicode-bidi:plaintext; }
+  .bar { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:8px 0 16px; }
+  button { background:#3b4bdb; color:#fff; border:0; border-radius:8px; padding:9px 16px; font:inherit; cursor:pointer; }
+  button.ghost { background:transparent; border:1px solid var(--line); color:var(--mut); padding:6px 10px; font-size:12px; }
+  button:disabled { opacity:.5; cursor:default; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:800px){ .grid { grid-template-columns:1fr; } }
+  .lane { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; border-top:4px solid; }
+  .lane.jev { border-top-color:var(--jev); } .lane.llm { border-top-color:var(--llm); }
+  .lane h2 { margin:0; font-size:17px; display:flex; justify-content:space-between; align-items:baseline; }
+  .clock { font-size:26px; font-weight:700; direction:ltr; font-variant-numeric:tabular-nums; }
+  .jev .clock { color:var(--jev); } .llm .clock { color:var(--llm); }
+  .desc { color:var(--mut); font-size:12px; margin:4px 0 10px; }
+  .progress { height:6px; background:var(--line); border-radius:4px; overflow:hidden; margin-bottom:10px; }
+  .progress div { height:100%; width:0; transition:width .2s; }
+  .jev .progress div { background:var(--jev); } .llm .progress div { background:var(--llm); }
+  .step { border:1px solid var(--line); border-radius:8px; padding:8px 10px; margin-bottom:6px; }
+  .step .row { display:flex; justify-content:space-between; gap:8px; align-items:center; }
+  .who { font-size:11px; padding:1px 6px; border-radius:4px; background:#2a3050; color:var(--mut); margin-left:6px; }
+  .chip { font-size:12px; padding:2px 8px; border-radius:10px; font-weight:bold; }
+  .chip.yes { background:#0c4a6e; color:var(--yes); } .chip.no { background:#3b2a6b; color:var(--no); }
+  .chip.wait { color:var(--mut); } .chip.err { background:#5b1a1a; color:var(--err); }
+  .meta { font-size:12px; font-variant-numeric:tabular-nums; color:var(--mut); direction:ltr; white-space:nowrap; }
+  details { margin-top:6px; } summary { cursor:pointer; color:var(--mut); font-size:12px; }
+  pre { direction:ltr; text-align:left; background:#0b0e19; border-radius:6px; padding:8px; font-size:11px;
+        max-height:240px; overflow:auto; white-space:pre-wrap; word-break:break-word; }
+  .why { font-size:12px; color:#c9cde3; margin-top:4px; unicode-bidi:plaintext; text-align:start; }
+  .reply { white-space:pre-wrap; unicode-bidi:plaintext; text-align:start; background:#0b0e19; padding:10px; border-radius:8px; margin-top:6px; }
+  .total { margin-top:10px; padding-top:10px; border-top:1px dashed var(--line); font-size:13px; }
+  .total b { direction:ltr; display:inline-block; font-variant-numeric:tabular-nums; }
+  .result { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; margin-top:14px; display:none; }
+  .tables { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:800px){ .tables { grid-template-columns:1fr; } }
+  .tables h3 { margin:0 0 8px; font-size:15px; font-weight:700; }
+  table { width:100%; border-collapse:collapse; table-layout:fixed; border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+  th { background:#22273d; color:var(--mut); font-weight:500; font-size:13px; }
+  td, th { padding:8px 10px; border-bottom:1px solid var(--line); text-align:center; }
+  td:first-child, th:first-child { text-align:right; width:40%; }
+  tr:last-child td { border-bottom:0; }
+  tbody tr:nth-child(even) td { background:#1c2135; }
+  td.n { direction:ltr; font-variant-numeric:tabular-nums; }
+  td.best { color:var(--jev); font-weight:700; }
+  th.jev { color:var(--jev); } th.llm { color:var(--llm); }
+  .win { font-size:18px; font-weight:700; margin-bottom:12px; }
+  .warn { background:#5b1a1a; padding:8px 12px; border-radius:8px; margin-bottom:10px; display:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🏁 مسابقه تصمیم‌گیری: Jev در برابر LLM</h1>
+  <div class="sub">یک تیکت پشتیبانی در ۵ مرحله تصمیم‌گیری بررسی می‌شود، بعد مسیر با کد مسیریابی می‌شود و در آخر یک پاسخ نوشته می‌شود. هر دو مسیر همزمان اجرا می‌شوند.</div>
+  <div class="warn" id="warn">کلیدهای API تنظیم نشده‌اند. فایل config.env را کامل کنید و سرور را دوباره اجرا کنید.</div>
+
+  <textarea id="ticket" dir="auto">My checkout page shows a blank screen after I click Pay. This is the third time this week and I was charged twice! Fix it or give me my money back, I'm about to cancel my subscription.</textarea>
+  <div class="bar">
+    <button id="go">▶ شروع مسابقه</button>
+    <span style="color:var(--mut)">نمونه‌ها:</span>
+    <button class="ghost" data-s="My checkout page shows a blank screen after I click Pay. This is the third time this week and I was charged twice! Fix it or give me my money back, I'm about to cancel my subscription.">پرداخت خراب</button>
+    <button class="ghost" data-s="Hi! Is there a way to export my reports to Excel? It would be a nice feature to have. Thanks!">درخواست قابلیت</button>
+    <button class="ghost" data-s="سلام، بعد از آپدیت جدید اپلیکیشن، دکمه ذخیره کار نمی‌کند و همه اطلاعاتی که وارد کردم پاک شد. خیلی عصبانی هستم.">باگ فارسی</button>
+    <button class="ghost" data-s="I'd like to change the email address on my account. How do I do that?">سؤال ساده</button>
+  </div>
+
+  <div class="grid">
+    <div class="lane jev" id="lane-jev">
+      <h2><span>⚡ مسیر ترکیبی Jev + LLM</span><span class="clock" id="clock-jev">0.00s</span></h2>
+      <div class="desc">تصمیم‌ها با <b id="m-jev"></b>، مسیریابی با کد، و فقط نوشتن پاسخ نهایی با <b class="m-llm"></b></div>
+      <div class="progress"><div id="prog-jev"></div></div>
+      <div id="steps-jev"></div>
+    </div>
+    <div class="lane llm" id="lane-llm">
+      <h2><span>🧠 مسیر فقط LLM</span><span class="clock" id="clock-llm">0.00s</span></h2>
+      <div class="desc">همه تصمیم‌ها و پاسخ نهایی با <b class="m-llm"></b> (با استدلال قدم به قدم)</div>
+      <div class="progress"><div id="prog-llm"></div></div>
+      <div id="steps-llm"></div>
+    </div>
+  </div>
+
+  <div class="result" id="result"></div>
+</div>
+
+<script>
+let CFG = null;
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const fmt = ms => (ms / 1000).toFixed(2) + "s";
+
+fetch("/api/config").then(r => r.json()).then(c => {
+  CFG = c;
+  $("m-jev").textContent = c.jev_model;
+  document.querySelectorAll(".m-llm").forEach(e => e.textContent = c.llm_model);
+  if (!c.keys_ok) $("warn").style.display = "block";
+});
+const bl = document.createElement("label");
+bl.style.color = "var(--mut)";
+const bx = document.createElement("input");
+bx.type = "checkbox"; bx.id = "batch"; bx.checked = true;
+bl.appendChild(bx);
+bl.appendChild(document.createTextNode(" Jev: همه تصمیم‌ها در یک درخواست"));
+document.querySelector(".bar").appendChild(bl);
+document.querySelectorAll("[data-s]").forEach(b => b.onclick = () => $("ticket").value = b.dataset.s);
+
+async function api(url, body) {
+  const r = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const j = await r.json();
+  if (!r.ok) throw new Error(j.error || r.statusText);
+  return j;
+}
+
+function tokText(u, path, isDecision) {
+  if (u) return u.total + " tok (" + u.prompt + "→" + u.completion + ")";
+  return path === "jev" && isDecision ? "بدون توکن LLM" : "—";
+}
+
+function stepBox(path, id, title, who) {
+  const el = document.createElement("div");
+  el.className = "step";
+  el.innerHTML = `<div class="row"><span><span class="who">${who}</span>${esc(title)}</span>
+    <span class="chip wait" id="c-${path}-${id}">در حال فکر…</span></div>
+    <div class="row"><span class="meta" id="t-${path}-${id}"></span></div>
+    <div id="x-${path}-${id}"></div>`;
+  $("steps-" + path).appendChild(el);
+}
+
+function trace(path, id, res) {
+  let h = "";
+  if (res.reasoning) h += `<div class="why">💭 ${esc(res.reasoning)}</div>`;
+  h += `<details><summary>پشت صحنه (درخواست / پاسخ خام)</summary>
+        <pre>REQUEST\n${esc(JSON.stringify(res.request, null, 2))}</pre>
+        <pre>RESPONSE\n${esc(JSON.stringify(res.response, null, 2))}</pre></details>`;
+  $(`x-${path}-${id}`).innerHTML = h;
+}
+
+async function runPath(path, ticket) {
+  const S = { path, decisions: {}, decideMs: 0, tokens: 0, wall: 0, errors: 0 };
+  const t0 = performance.now();
+  const timer = setInterval(() => $("clock-" + path).textContent = fmt(performance.now() - t0), 50);
+  const n = CFG.steps.length + 2;
+  let done = 0;
+  const tick = () => $("prog-" + path).style.width = (++done / n * 100) + "%";
+  const who = path === "jev" ? "Jev" : "LLM";
+
+  const batch = path === "jev" ? $("batch").checked : false;
+  if (batch) {
+    CFG.steps.forEach(function (st) { stepBox(path, st.id, st.title, who); });
+    try {
+      const res = await api("/api/jev_batch", { ticket });
+      S.decideMs = res.ms;
+      if (res.usage) S.tokens += res.usage.total;
+      CFG.steps.forEach(function (st, i) {
+        const r = res.steps[st.id];
+        S.decisions[st.id] = r.decision;
+        const c = $(`c-${path}-${st.id}`);
+        c.className = "chip " + (r.decision === true ? "yes" : r.decision === false ? "no" : "wait");
+        c.textContent = (r.decision === true ? "بله" : r.decision === false ? "خیر" : "نامشخص")
+          + (typeof r.confidence === "number" ? " (" + r.confidence.toFixed(2) + ")" : "");
+        $(`t-${path}-${st.id}`).textContent = i === 0
+          ? fmt(res.ms) + " · " + tokText(res.usage, path, true) + " · یک درخواست برای هر ۵ تصمیم"
+          : "↑ همان درخواست";
+        tick();
+      });
+      trace(path, CFG.steps[0].id, res);
+    } catch (e) {
+      S.errors++;
+      CFG.steps.forEach(function (st) {
+        const c = $(`c-${path}-${st.id}`); c.className = "chip err"; c.textContent = "خطا"; tick();
+      });
+      $(`x-${path}-${CFG.steps[0].id}`).textContent = e.message;
+    }
+  }
+
+  for (const st of (batch ? [] : CFG.steps)) {
+    stepBox(path, st.id, st.title, who);
+    try {
+      const res = await api("/api/step", { path, step: st.id, ticket });
+      S.decisions[st.id] = res.decision;
+      S.decideMs += res.ms;
+      if (res.usage) S.tokens += res.usage.total;
+      const c = $(`c-${path}-${st.id}`);
+      c.className = "chip " + (res.decision === true ? "yes" : res.decision === false ? "no" : "wait");
+      c.textContent = res.decision === true ? "بله" : res.decision === false ? "خیر" : "نامشخص";
+      if (typeof res.confidence === "number") c.textContent += " (" + res.confidence.toFixed(2) + ")";
+      $(`t-${path}-${st.id}`).textContent = fmt(res.ms) + " · " + tokText(res.usage, path, true);
+      trace(path, st.id, res);
+    } catch (e) {
+      S.errors++;
+      const c = $(`c-${path}-${st.id}`); c.className = "chip err"; c.textContent = "خطا";
+      $(`x-${path}-${st.id}`).innerHTML = `<pre>${esc(e.message)}</pre>`;
+    }
+    tick();
+  }
+
+  // routing is plain code in both paths, shown for transparency
+  stepBox(path, "route", "مسیریابی تیکت", "کد");
+  const team = S.decisions.wants_refund ? "Billing" : S.decisions.is_bug ? "Engineering" : "Customer Success";
+  $(`c-${path}-route`).className = "chip yes"; $(`c-${path}-route`).textContent = team;
+  $(`t-${path}-route`).textContent = "~0.00s · بدون توکن";
+  tick();
+
+  stepBox(path, "reply", "نوشتن پاسخ به مشتری", "LLM");
+  try {
+    const res = await api("/api/reply", { ticket, decisions: S.decisions });
+    if (res.usage) S.tokens += res.usage.total;
+    S.replyMs = res.ms;
+    $(`c-${path}-reply`).className = "chip yes"; $(`c-${path}-reply`).textContent = "✓";
+    $(`t-${path}-reply`).textContent = fmt(res.ms) + " · " + tokText(res.usage, path, false);
+    trace(path, "reply", res);
+    $(`x-${path}-reply`).insertAdjacentHTML("afterbegin", `<div class="reply">${esc(res.text)}</div>`);
+  } catch (e) {
+    S.errors++;
+    $(`c-${path}-reply`).className = "chip err"; $(`c-${path}-reply`).textContent = "خطا";
+    $(`x-${path}-reply`).innerHTML = `<pre>${esc(e.message)}</pre>`;
+  }
+  tick();
+
+  clearInterval(timer);
+  S.wall = performance.now() - t0;
+  $("clock-" + path).textContent = fmt(S.wall);
+  $("steps-" + path).insertAdjacentHTML("beforeend",
+    `<div class="total">زمان تصمیم‌گیری: <b>${fmt(S.decideMs)}</b> · کل زمان: <b>${fmt(S.wall)}</b> · توکن: <b>${S.tokens}</b></div>`);
+  return S;
+}
+
+$("go").onclick = async () => {
+  const ticket = $("ticket").value.trim();
+  if (!ticket || !CFG) return;
+  $("go").disabled = true;
+  ["jev", "llm"].forEach(p => { $("steps-" + p).innerHTML = ""; $("prog-" + p).style.width = "0"; });
+  $("result").style.display = "none";
+
+  const [J, L] = await Promise.all([runPath("jev", ticket), runPath("llm", ticket)]);
+
+  const agree = CFG.steps.filter(s => J.decisions[s.id] === L.decisions[s.id]).length;
+  const speed = J.decideMs > 0 ? (L.decideMs / J.decideMs).toFixed(1) : "—";
+  const winner = J.wall < L.wall ? "⚡ مسیر Jev + LLM برنده شد" : "🧠 مسیر فقط LLM برنده شد";
+  const v = function (x) { return x === true ? "بله" : x === false ? "خیر" : "?"; };
+  const rows = CFG.steps.map(function (s) {
+    const same = J.decisions[s.id] === L.decisions[s.id];
+    return `<tr><td>${esc(s.title)}</td><td>${v(J.decisions[s.id])}</td><td>${v(L.decisions[s.id])}</td><td>${same ? "✅" : "⚠️"}</td></tr>`;
+  }).join("");
+  const metric = function (label, a, b, text) {
+    const best = a < b ? 0 : b < a ? 1 : -1;
+    return `<tr><td>${label}</td><td class="n${best === 0 ? " best" : ""}">${text(a)}</td><td class="n${best === 1 ? " best" : ""}">${text(b)}</td></tr>`;
+  };
+  $("result").innerHTML = `
+    <div class="win">${winner} · تصمیم‌گیری Jev حدود <b>${speed}×</b> سریع‌تر</div>
+    <div class="tables">
+      <div>
+        <h3>سرعت و هزینه</h3>
+        <table>
+          <thead><tr><th>معیار</th><th class="jev">Jev + LLM</th><th class="llm">فقط LLM</th></tr></thead>
+          <tbody>
+            ${metric("زمان تصمیم‌گیری", J.decideMs, L.decideMs, fmt)}
+            ${metric("زمان کل (با نوشتن پاسخ)", J.wall, L.wall, fmt)}
+            ${metric("توکن مصرف‌شده", J.tokens, L.tokens, String)}
+            ${metric("خطاها", J.errors, L.errors, String)}
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h3>کیفیت: ${agree} از ${CFG.steps.length} تصمیم یکسان</h3>
+        <table>
+          <thead><tr><th>مرحله</th><th class="jev">Jev</th><th class="llm">LLM</th><th>توافق</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>`;
+  $("result").style.display = "block";
+  $("go").disabled = false;
+};
+</script>
+</body>
+</html>

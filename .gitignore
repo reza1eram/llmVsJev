@@ -1,0 +1,6 @@
+.env
+config.env
+__pycache__/
+
+*.exe
+!release/*.exe
