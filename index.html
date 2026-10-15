@@ -11,91 +11,117 @@
   :root { --bg:#0f1220; --card:#181c2e; --line:#2a3050; --txt:#e8eaf3; --mut:#8b92b3;
           --jev:#22c55e; --llm:#f59e0b; --yes:#38bdf8; --no:#a78bfa; --err:#ef4444; }
   * { box-sizing:border-box; }
-  body { margin:0; background:var(--bg); color:var(--txt); font-family:"Vazirmatn", Tahoma, sans-serif; font-size:14px; line-height:1.7; }
+  html, body { height:100%; }
+  body { margin:0; background:var(--bg); color:var(--txt); font-family:"Vazirmatn", Tahoma, sans-serif; font-size:13px; line-height:1.6; }
   button, textarea, input { font-family:inherit; }
-  .wrap { max-width:1200px; margin:0 auto; padding:16px; }
-  h1 { margin:4px 0 2px; font-size:22px; }
-  .sub { color:var(--mut); margin-bottom:14px; }
-  textarea { width:100%; min-height:80px; background:var(--card); color:var(--txt); border:1px solid var(--line);
-             border-radius:8px; padding:10px; font:inherit; unicode-bidi:plaintext; }
-  .bar { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:8px 0 16px; }
-  button { background:#3b4bdb; color:#fff; border:0; border-radius:8px; padding:9px 16px; font:inherit; cursor:pointer; }
-  button.ghost { background:transparent; border:1px solid var(--line); color:var(--mut); padding:6px 10px; font-size:12px; }
+  .wrap { height:100vh; display:flex; flex-direction:column; gap:10px; padding:12px 16px; max-width:1600px; margin:0 auto; }
+  header { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; }
+  h1 { margin:0; font-size:20px; }
+  .sub { color:var(--mut); font-size:12px; }
+  .controls { display:flex; gap:10px; align-items:stretch; }
+  textarea { flex:1; height:62px; resize:none; background:var(--card); color:var(--txt); border:1px solid var(--line);
+             border-radius:8px; padding:8px 10px; font:inherit; unicode-bidi:plaintext; }
+  .side { display:flex; flex-direction:column; gap:6px; justify-content:space-between; }
+  .bar { display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+  button { background:#3b4bdb; color:#fff; border:0; border-radius:8px; padding:7px 16px; font:inherit; font-weight:700; cursor:pointer; }
+  button.ghost { background:transparent; border:1px solid var(--line); color:var(--mut); padding:3px 9px; font-size:12px; font-weight:400; }
   button:disabled { opacity:.5; cursor:default; }
-  .grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-  @media (max-width:800px){ .grid { grid-template-columns:1fr; } }
-  .lane { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; border-top:4px solid; }
+  label { color:var(--mut); font-size:12px; }
+  .grid { flex:1; min-height:0; display:grid; grid-template-columns:1fr 1fr 1.05fr; gap:12px; }
+  .panel { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; min-height:0; overflow:auto; }
+  .lane { border-top:4px solid; display:flex; flex-direction:column; }
   .lane.jev { border-top-color:var(--jev); } .lane.llm { border-top-color:var(--llm); }
-  .lane h2 { margin:0; font-size:17px; display:flex; justify-content:space-between; align-items:baseline; }
-  .clock { font-size:26px; font-weight:700; direction:ltr; font-variant-numeric:tabular-nums; }
+  .lane h2 { margin:0; font-size:15px; display:flex; justify-content:space-between; align-items:center; }
+  .clock { font-size:24px; font-weight:700; direction:ltr; font-variant-numeric:tabular-nums; }
   .jev .clock { color:var(--jev); } .llm .clock { color:var(--llm); }
-  .desc { color:var(--mut); font-size:12px; margin:4px 0 10px; }
-  .progress { height:6px; background:var(--line); border-radius:4px; overflow:hidden; margin-bottom:10px; }
+  .desc { color:var(--mut); font-size:11px; margin:0 0 6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .progress { height:5px; background:var(--line); border-radius:4px; overflow:hidden; margin-bottom:8px; flex:none; }
   .progress div { height:100%; width:0; transition:width .2s; }
   .jev .progress div { background:var(--jev); } .llm .progress div { background:var(--llm); }
-  .step { border:1px solid var(--line); border-radius:8px; padding:8px 10px; margin-bottom:6px; }
+  .step { border:1px solid var(--line); border-radius:8px; padding:4px 8px; margin-bottom:5px; }
   .step .row { display:flex; justify-content:space-between; gap:8px; align-items:center; }
-  .who { font-size:11px; padding:1px 6px; border-radius:4px; background:#2a3050; color:var(--mut); margin-left:6px; }
-  .chip { font-size:12px; padding:2px 8px; border-radius:10px; font-weight:bold; }
+  .who { font-size:10px; padding:0 5px; border-radius:4px; background:#2a3050; color:var(--mut); margin-left:6px; }
+  .chip { font-size:11px; padding:1px 8px; border-radius:10px; font-weight:700; white-space:nowrap; }
   .chip.yes { background:#0c4a6e; color:var(--yes); } .chip.no { background:#3b2a6b; color:var(--no); }
   .chip.wait { color:var(--mut); } .chip.err { background:#5b1a1a; color:var(--err); }
-  .meta { font-size:12px; font-variant-numeric:tabular-nums; color:var(--mut); direction:ltr; white-space:nowrap; }
-  details { margin-top:6px; } summary { cursor:pointer; color:var(--mut); font-size:12px; }
+  .meta { font-size:11px; font-variant-numeric:tabular-nums; color:var(--mut); direction:ltr; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .x { flex:0 1 auto; min-width:0; text-align:left; }
+  .row:has(details[open]), .row:has(> .x > pre) { flex-wrap:wrap; }
+  .x:has(details[open]), .x:has(> pre) { flex-basis:100%; text-align:start; }
+  details { margin:0; } summary { cursor:pointer; color:var(--mut); font-size:11px; }
   pre { direction:ltr; text-align:left; background:#0b0e19; border-radius:6px; padding:8px; font-size:11px;
-        max-height:240px; overflow:auto; white-space:pre-wrap; word-break:break-word; }
-  .why { font-size:12px; color:#c9cde3; margin-top:4px; unicode-bidi:plaintext; text-align:start; }
-  .reply { white-space:pre-wrap; unicode-bidi:plaintext; text-align:start; background:#0b0e19; padding:10px; border-radius:8px; margin-top:6px; }
-  .total { margin-top:10px; padding-top:10px; border-top:1px dashed var(--line); font-size:13px; }
+        max-height:200px; overflow:auto; white-space:pre-wrap; word-break:break-word; }
+  .why { font-size:12px; color:#c9cde3; margin:4px 0; unicode-bidi:plaintext; text-align:start; }
+  .reply { white-space:pre-wrap; unicode-bidi:plaintext; text-align:start; background:#0b0e19; padding:6px 10px; border-radius:8px;
+           margin-top:4px; font-size:12px; max-height:92px; overflow:auto; }
+  .total { margin-top:auto; padding-top:8px; border-top:1px dashed var(--line); font-size:12px; }
   .total b { direction:ltr; display:inline-block; font-variant-numeric:tabular-nums; }
-  .result { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; margin-top:14px; display:none; }
-  .tables { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-  @media (max-width:800px){ .tables { grid-template-columns:1fr; } }
-  .tables h3 { margin:0 0 8px; font-size:15px; font-weight:700; }
+  .result h2 { margin:0 0 8px; font-size:15px; }
+  .empty { color:var(--mut); text-align:center; padding:40px 10px; }
+  .result h3 { margin:12px 0 6px; font-size:13px; font-weight:700; }
   table { width:100%; border-collapse:collapse; table-layout:fixed; border:1px solid var(--line); border-radius:8px; overflow:hidden; }
-  th { background:#22273d; color:var(--mut); font-weight:500; font-size:13px; }
-  td, th { padding:8px 10px; border-bottom:1px solid var(--line); text-align:center; }
-  td:first-child, th:first-child { text-align:right; width:40%; }
+  th { background:#22273d; color:var(--mut); font-weight:500; font-size:12px; }
+  td, th { padding:5px 8px; border-bottom:1px solid var(--line); text-align:center; }
+  td:first-child, th:first-child { text-align:right; width:44%; }
   tr:last-child td { border-bottom:0; }
   tbody tr:nth-child(even) td { background:#1c2135; }
   td.n { direction:ltr; font-variant-numeric:tabular-nums; }
   td.best { color:var(--jev); font-weight:700; }
   th.jev { color:var(--jev); } th.llm { color:var(--llm); }
-  .win { font-size:18px; font-weight:700; margin-bottom:12px; }
-  .warn { background:#5b1a1a; padding:8px 12px; border-radius:8px; margin-bottom:10px; display:none; }
+  .win { font-size:16px; font-weight:700; padding:10px 12px; border-radius:10px; background:#12301f; color:var(--jev); }
+  .win.llm { background:#3a2a0c; color:var(--llm); }
+  .win small { display:block; font-size:12px; font-weight:400; color:var(--txt); }
+  .warn { background:#5b1a1a; padding:6px 12px; border-radius:8px; display:none; }
+  @media (max-width:1000px) {
+    .wrap { height:auto; }
+    .grid { grid-template-columns:1fr; }
+    .controls { flex-direction:column; }
+    .panel { overflow:visible; }
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>🏁 مسابقه تصمیم‌گیری: Jev در برابر LLM</h1>
-  <div class="sub">یک تیکت پشتیبانی در ۵ مرحله تصمیم‌گیری بررسی می‌شود، بعد مسیر با کد مسیریابی می‌شود و در آخر یک پاسخ نوشته می‌شود. هر دو مسیر همزمان اجرا می‌شوند.</div>
+  <header>
+    <h1>🏁 مسابقه تصمیم‌گیری: Jev در برابر LLM</h1>
+    <span class="sub">یک تیکت پشتیبانی، ۵ تصمیم، مسیریابی با کد و نوشتن پاسخ. هر دو مسیر همزمان اجرا می‌شوند.</span>
+  </header>
   <div class="warn" id="warn">کلیدهای API تنظیم نشده‌اند. فایل config.env را کامل کنید و سرور را دوباره اجرا کنید.</div>
 
-  <textarea id="ticket" dir="auto">My checkout page shows a blank screen after I click Pay. This is the third time this week and I was charged twice! Fix it or give me my money back, I'm about to cancel my subscription.</textarea>
-  <div class="bar">
-    <button id="go">▶ شروع مسابقه</button>
-    <span style="color:var(--mut)">نمونه‌ها:</span>
-    <button class="ghost" data-s="My checkout page shows a blank screen after I click Pay. This is the third time this week and I was charged twice! Fix it or give me my money back, I'm about to cancel my subscription.">پرداخت خراب</button>
-    <button class="ghost" data-s="Hi! Is there a way to export my reports to Excel? It would be a nice feature to have. Thanks!">درخواست قابلیت</button>
-    <button class="ghost" data-s="سلام، بعد از آپدیت جدید اپلیکیشن، دکمه ذخیره کار نمی‌کند و همه اطلاعاتی که وارد کردم پاک شد. خیلی عصبانی هستم.">باگ فارسی</button>
-    <button class="ghost" data-s="I'd like to change the email address on my account. How do I do that?">سؤال ساده</button>
+  <div class="controls">
+    <textarea id="ticket" dir="auto">My checkout page shows a blank screen after I click Pay. This is the third time this week and I was charged twice! Fix it or give me my money back, I'm about to cancel my subscription.</textarea>
+    <div class="side">
+      <div class="bar">
+        <span style="color:var(--mut)">نمونه‌ها:</span>
+        <button class="ghost" data-s="My checkout page shows a blank screen after I click Pay. This is the third time this week and I was charged twice! Fix it or give me my money back, I'm about to cancel my subscription.">پرداخت خراب</button>
+        <button class="ghost" data-s="Hi! Is there a way to export my reports to Excel? It would be a nice feature to have. Thanks!">درخواست قابلیت</button>
+        <button class="ghost" data-s="سلام، بعد از آپدیت جدید اپلیکیشن، دکمه ذخیره کار نمی‌کند و همه اطلاعاتی که وارد کردم پاک شد. خیلی عصبانی هستم.">باگ فارسی</button>
+        <button class="ghost" data-s="I'd like to change the email address on my account. How do I do that?">سؤال ساده</button>
+      </div>
+      <div class="bar" id="runbar">
+        <button id="go">▶ شروع مسابقه</button>
+      </div>
+    </div>
   </div>
 
   <div class="grid">
-    <div class="lane jev" id="lane-jev">
+    <div class="panel lane jev" id="lane-jev">
       <h2><span>⚡ مسیر ترکیبی Jev + LLM</span><span class="clock" id="clock-jev">0.00s</span></h2>
-      <div class="desc">تصمیم‌ها با <b id="m-jev"></b>، مسیریابی با کد، و فقط نوشتن پاسخ نهایی با <b class="m-llm"></b></div>
+      <div class="desc">تصمیم‌ها با <b id="m-jev"></b>، مسیریابی با کد، و فقط نوشتن پاسخ با <b class="m-llm"></b></div>
       <div class="progress"><div id="prog-jev"></div></div>
       <div id="steps-jev"></div>
     </div>
-    <div class="lane llm" id="lane-llm">
+    <div class="panel lane llm" id="lane-llm">
       <h2><span>🧠 مسیر فقط LLM</span><span class="clock" id="clock-llm">0.00s</span></h2>
-      <div class="desc">همه تصمیم‌ها و پاسخ نهایی با <b class="m-llm"></b> (با استدلال قدم به قدم)</div>
+      <div class="desc">همه تصمیم‌ها و پاسخ با <b class="m-llm"></b> (با استدلال قدم به قدم)</div>
       <div class="progress"><div id="prog-llm"></div></div>
       <div id="steps-llm"></div>
     </div>
+    <div class="panel result" id="result">
+      <h2>📊 نتیجه</h2>
+      <div class="empty">نتیجه‌ی مقایسه بعد از پایان مسابقه اینجا نمایش داده می‌شود.</div>
+    </div>
   </div>
-
-  <div class="result" id="result"></div>
 </div>
 
 <script>
@@ -116,7 +142,7 @@ const bx = document.createElement("input");
 bx.type = "checkbox"; bx.id = "batch"; bx.checked = true;
 bl.appendChild(bx);
 bl.appendChild(document.createTextNode(" Jev: همه تصمیم‌ها در یک درخواست"));
-document.querySelector(".bar").appendChild(bl);
+$("runbar").appendChild(bl);
 document.querySelectorAll("[data-s]").forEach(b => b.onclick = () => $("ticket").value = b.dataset.s);
 
 async function api(url, body) {
@@ -136,15 +162,14 @@ function stepBox(path, id, title, who) {
   el.className = "step";
   el.innerHTML = `<div class="row"><span><span class="who">${who}</span>${esc(title)}</span>
     <span class="chip wait" id="c-${path}-${id}">در حال فکر…</span></div>
-    <div class="row"><span class="meta" id="t-${path}-${id}"></span></div>
-    <div id="x-${path}-${id}"></div>`;
+    <div class="row"><span class="meta" id="t-${path}-${id}"></span><div class="x" id="x-${path}-${id}"></div></div>`;
   $("steps-" + path).appendChild(el);
 }
 
 function trace(path, id, res) {
   let h = "";
-  if (res.reasoning) h += `<div class="why">💭 ${esc(res.reasoning)}</div>`;
-  h += `<details><summary>پشت صحنه (درخواست / پاسخ خام)</summary>
+  h += `<details><summary>پشت صحنه</summary>
+        ${res.reasoning ? `<div class="why">💭 ${esc(res.reasoning)}</div>` : ""}
         <pre>REQUEST\n${esc(JSON.stringify(res.request, null, 2))}</pre>
         <pre>RESPONSE\n${esc(JSON.stringify(res.response, null, 2))}</pre></details>`;
   $(`x-${path}-${id}`).innerHTML = h;
@@ -224,7 +249,7 @@ async function runPath(path, ticket) {
     $(`c-${path}-reply`).className = "chip yes"; $(`c-${path}-reply`).textContent = "✓";
     $(`t-${path}-reply`).textContent = fmt(res.ms) + " · " + tokText(res.usage, path, false);
     trace(path, "reply", res);
-    $(`x-${path}-reply`).insertAdjacentHTML("afterbegin", `<div class="reply">${esc(res.text)}</div>`);
+    $(`x-${path}-reply`).parentElement.insertAdjacentHTML("afterend", `<div class="reply">${esc(res.text)}</div>`);
   } catch (e) {
     S.errors++;
     $(`c-${path}-reply`).className = "chip err"; $(`c-${path}-reply`).textContent = "خطا";
@@ -235,7 +260,7 @@ async function runPath(path, ticket) {
   clearInterval(timer);
   S.wall = performance.now() - t0;
   $("clock-" + path).textContent = fmt(S.wall);
-  $("steps-" + path).insertAdjacentHTML("beforeend",
+  $("lane-" + path).insertAdjacentHTML("beforeend",
     `<div class="total">زمان تصمیم‌گیری: <b>${fmt(S.decideMs)}</b> · کل زمان: <b>${fmt(S.wall)}</b> · توکن: <b>${S.tokens}</b></div>`);
   return S;
 }
@@ -245,7 +270,8 @@ $("go").onclick = async () => {
   if (!ticket || !CFG) return;
   $("go").disabled = true;
   ["jev", "llm"].forEach(p => { $("steps-" + p).innerHTML = ""; $("prog-" + p).style.width = "0"; });
-  $("result").style.display = "none";
+  document.querySelectorAll(".total").forEach(e => e.remove());
+  $("result").innerHTML = `<h2>📊 نتیجه</h2><div class="empty">مسابقه در جریان است…</div>`;
 
   const [J, L] = await Promise.all([runPath("jev", ticket), runPath("llm", ticket)]);
 
@@ -262,9 +288,8 @@ $("go").onclick = async () => {
     return `<tr><td>${label}</td><td class="n${best === 0 ? " best" : ""}">${text(a)}</td><td class="n${best === 1 ? " best" : ""}">${text(b)}</td></tr>`;
   };
   $("result").innerHTML = `
-    <div class="win">${winner} · تصمیم‌گیری Jev حدود <b>${speed}×</b> سریع‌تر</div>
-    <div class="tables">
-      <div>
+    <h2>📊 نتیجه</h2>
+    <div class="win${J.wall < L.wall ? "" : " llm"}">${winner}<small>تصمیم‌گیری Jev حدود <b>${speed}×</b> سریع‌تر</small></div>
         <h3>سرعت و هزینه</h3>
         <table>
           <thead><tr><th>معیار</th><th class="jev">Jev + LLM</th><th class="llm">فقط LLM</th></tr></thead>
@@ -275,16 +300,11 @@ $("go").onclick = async () => {
             ${metric("خطاها", J.errors, L.errors, String)}
           </tbody>
         </table>
-      </div>
-      <div>
         <h3>کیفیت: ${agree} از ${CFG.steps.length} تصمیم یکسان</h3>
         <table>
           <thead><tr><th>مرحله</th><th class="jev">Jev</th><th class="llm">LLM</th><th>توافق</th></tr></thead>
           <tbody>${rows}</tbody>
-        </table>
-      </div>
-    </div>`;
-  $("result").style.display = "block";
+        </table>`;
   $("go").disabled = false;
 };
 </script>
